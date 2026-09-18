@@ -7,428 +7,582 @@
 <title>三角比計算機</title>
 <style>
 *{box-sizing:border-box}
+
 body{
-  margin:0;padding:18px;
-  font-family:system-ui,"Noto Sans JP",sans-serif;
-  background:linear-gradient(135deg,#dbeafe,#f3e8ff);
-  color:#172033;
+ margin:0;
+ padding:18px;
+ font-family:system-ui,"Noto Sans JP",sans-serif;
+ background:linear-gradient(135deg,#dbeafe,#f3e8ff);
+ color:#172033;
 }
+
 .container{max-width:720px;margin:auto}
+
 h1{text-align:center;font-size:clamp(25px,7vw,38px)}
 .subtitle{text-align:center;color:#64748b;margin-bottom:25px}
+
 .card{
-  background:white;border-radius:22px;padding:22px;
-  margin-bottom:18px;box-shadow:0 8px 30px #33415512;
+ background:white;
+ border-radius:22px;
+ padding:22px;
+ margin-bottom:18px;
+ box-shadow:0 8px 30px #33415512;
 }
+
 h2{font-size:20px;margin:0 0 18px}
-input,select,button{
-  width:100%;padding:13px;border-radius:12px;
-  font:inherit;
+
+.grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:14px;
 }
-input,select{border:1px solid #cbd5e1;background:#f8fafc}
-input:focus,select:focus{
-  outline:3px solid #bfdbfe;border-color:#2563eb;
+
+label{
+ display:block;
+ font-weight:bold;
+ font-size:14px;
+ margin-bottom:6px;
 }
+
+input,button{
+ width:100%;
+ padding:13px;
+ border-radius:12px;
+ font:inherit;
+}
+
+input{
+ border:1px solid #cbd5e1;
+ background:#f8fafc;
+}
+
 button{
-  margin-top:16px;border:0;background:#2563eb;
-  color:white;font-weight:bold;cursor:pointer;
+ margin-top:16px;
+ border:0;
+ background:#2563eb;
+ color:white;
+ font-weight:bold;
+ cursor:pointer;
 }
+
 button:hover{background:#1d4ed8}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-label{display:block;font-weight:bold;font-size:14px;margin-bottom:6px}
+
 .result{
-  background:#eff6ff;border:1px solid #bfdbfe;
-  border-radius:16px;padding:18px;margin-top:18px;
+ background:#eff6ff;
+ border:1px solid #bfdbfe;
+ border-radius:16px;
+ padding:18px;
+ margin-top:18px;
 }
-.result h3{margin:0 0 12px;color:#1d4ed8}
-.answer{
-  font-size:clamp(23px,6vw,35px);
-  font-weight:800;color:#1d4ed8;
-  overflow-wrap:anywhere;
+
+.result h3{
+ margin:0 0 14px;
+ color:#1d4ed8;
 }
+
 .line{
-  display:flex;justify-content:space-between;
-  gap:10px;padding:12px 0;border-bottom:1px solid #dbeafe;
-  align-items:center;flex-wrap:wrap;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:10px;
+ padding:14px 0;
+ border-bottom:1px solid #dbeafe;
+ flex-wrap:wrap;
 }
+
 .line:last-child{border-bottom:0}
-.symbol{font-size:20px;font-weight:bold}
-.value{font-size:21px;font-weight:bold;color:#1d4ed8}
-.decimal{font-size:13px;color:#64748b}
-.steps{
-  background:#f8fafc;border-radius:14px;padding:15px;
-  margin-top:14px;line-height:2;overflow-wrap:anywhere;
+
+.symbol{
+ font-size:20px;
+ font-weight:bold;
 }
-.error{color:#dc2626;font-size:14px;margin-top:10px}
-.note{font-size:13px;color:#64748b;line-height:1.8}
-svg{display:block;width:100%;max-height:240px}
+
+.value{
+ font-size:25px;
+ font-weight:bold;
+ color:#1d4ed8;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ min-width:70px;
+}
+
+.decimal{
+ font-size:13px;
+ color:#64748b;
+}
+
+.error{
+ color:#dc2626;
+ font-size:14px;
+ margin-top:10px;
+}
+
+.steps{
+ background:#f8fafc;
+ border-radius:14px;
+ padding:15px;
+ margin-top:14px;
+ line-height:2;
+ overflow-wrap:anywhere;
+}
+
+.note{
+ font-size:13px;
+ color:#64748b;
+ line-height:1.8;
+}
+
+/* 本物の分数表示 */
+.frac{
+ display:inline-flex;
+ flex-direction:column;
+ align-items:center;
+ vertical-align:middle;
+ line-height:1.15;
+ font-size:1em;
+ min-width:24px;
+}
+
+.frac .top{
+ padding:0 5px 3px;
+ border-bottom:2px solid currentColor;
+}
+
+.frac .bottom{
+ padding:3px 5px 0;
+}
+
+.root{white-space:nowrap}
+
 @media(max-width:480px){
-  body{padding:12px}
-  .card{padding:16px}
-  .grid{gap:10px}
+ body{padding:12px}
+ .card{padding:16px}
+ .grid{gap:10px}
+ .line{justify-content:space-between}
 }
 </style>
 </head>
+
 <body>
 <div class="container">
+
 <h1>📐 三角比計算機</h1>
-<p class="subtitle">sin A・cos A・tan A を計算しよう！</p>
+<p class="subtitle">sin A・cos A・tan A を分数で計算！</p>
 
 <div class="card">
-<h2>直角三角形と三角比</h2>
-<svg viewBox="0 0 500 250" role="img"
-aria-label="角Aを持つ直角三角形">
-<path d="M80 205 L80 35 L420 205 Z"
-fill="#3b82f615" stroke="#2563eb" stroke-width="3"/>
-<path d="M80 183 L102 183 L102 205"
-fill="none" stroke="#2563eb" stroke-width="2"/>
-<text x="60" y="27" font-size="22" fill="currentColor">B</text>
-<text x="60" y="230" font-size="22" fill="currentColor">C</text>
-<text x="430" y="230" font-size="22" fill="currentColor">A</text>
-<text x="250" y="230" text-anchor="middle" font-size="16" fill="#2563eb">となりの辺</text>
-<text x="55" y="125" text-anchor="end" font-size="16" fill="#2563eb">向かい側</text>
-<text x="245" y="105" text-anchor="middle" font-size="17" fill="#2563eb">斜辺</text>
-</svg>
-<div class="steps">
-<b>sin A</b> = 向かい側の辺 ÷ 斜辺<br>
-<b>cos A</b> = となりの辺 ÷ 斜辺<br>
-<b>tan A</b> = 向かい側の辺 ÷ となりの辺
-</div>
-</div>
+<h2>① 角度から求める</h2>
 
-<div class="card">
-<h2>① 角度Aから求める</h2>
 <label for="angle">角度 A（度）</label>
 <input id="angle" type="number" min="0" max="89.999999"
-step="any" value="30" placeholder="例：30">
-<button onclick="calcAngle()">sin・cos・tan を計算</button>
+step="any" value="30">
+
+<button onclick="calcAngle()">計算する</button>
 <div id="angleError" class="error"></div>
+
 <div class="result">
 <h3>計算結果</h3>
+
 <div class="line">
 <span class="symbol">sin A</span>
-<span class="value" id="sinAngle">1/2</span>
-<span class="decimal" id="sinDec">= 0.5</span>
+<span class="value" id="sinAngle"></span>
+<span class="decimal" id="sinDec"></span>
 </div>
+
 <div class="line">
 <span class="symbol">cos A</span>
-<span class="value" id="cosAngle">√3/2</span>
-<span class="decimal" id="cosDec">= 0.866025</span>
+<span class="value" id="cosAngle"></span>
+<span class="decimal" id="cosDec"></span>
 </div>
+
 <div class="line">
 <span class="symbol">tan A</span>
-<span class="value" id="tanAngle">√3/3</span>
-<span class="decimal" id="tanDec">= 0.577350</span>
+<span class="value" id="tanAngle"></span>
+<span class="decimal" id="tanDec"></span>
 </div>
+
 </div>
 </div>
 
 <div class="card">
 <h2>② 辺の長さから求める</h2>
-<p class="note">分数や√（ルート）も入力できます。例：3/4、√3、√3/2</p>
+
+<p class="note">
+分数で入力できます。例：3/4、1/2<br>
+整数を入力すると、答えも分数で表示します。
+</p>
+
 <div class="grid">
 <div>
 <label for="opposite">向かい側の辺</label>
 <input id="opposite" value="3" placeholder="例：3">
 </div>
+
 <div>
 <label for="adjacent">となりの辺</label>
 <input id="adjacent" value="4" placeholder="例：4">
 </div>
 </div>
+
 <div style="margin-top:14px">
-<label for="hypotenuse">斜辺（任意）</label>
-<input id="hypotenuse" placeholder="例：5">
+<label for="hypotenuse">斜辺</label>
+<input id="hypotenuse" value="5" placeholder="例：5">
 </div>
-<button onclick="calcSides()">sin・cos・tan を計算</button>
+
+<button onclick="calcSides()">計算する</button>
 <div id="sideError" class="error"></div>
+
 <div class="result">
 <h3>計算結果</h3>
+
 <div class="line">
 <span class="symbol">sin A</span>
-<span class="value" id="sinSide">3/5</span>
-<span class="decimal" id="sinSideDec">= 0.6</span>
+<span class="value" id="sinSide"></span>
+<span class="decimal" id="sinSideDec"></span>
 </div>
+
 <div class="line">
 <span class="symbol">cos A</span>
-<span class="value" id="cosSide">4/5</span>
-<span class="decimal" id="cosSideDec">= 0.8</span>
+<span class="value" id="cosSide"></span>
+<span class="decimal" id="cosSideDec"></span>
 </div>
+
 <div class="line">
 <span class="symbol">tan A</span>
-<span class="value" id="tanSide">3/4</span>
-<span class="decimal" id="tanSideDec">= 0.75</span>
+<span class="value" id="tanSide"></span>
+<span class="decimal" id="tanSideDec"></span>
 </div>
+
 </div>
-<div class="steps" id="sideSteps"></div>
 </div>
 
 <div class="card">
 <h2>③ よく使う三角比</h2>
+
 <div class="steps">
+
 <b>30°</b><br>
-sin30° = 1/2<br>
-cos30° = √3/2<br>
-tan30° = √3/3<br><br>
+sin30° =
+<span class="frac"><span class="top">1</span><span class="bottom">2</span></span>
+<br>
+cos30° =
+<span class="frac"><span class="top">√3</span><span class="bottom">2</span></span>
+<br>
+tan30° =
+<span class="frac"><span class="top">√3</span><span class="bottom">3</span></span>
+
+<br><br>
+
 <b>45°</b><br>
-sin45° = √2/2<br>
-cos45° = √2/2<br>
-tan45° = 1<br><br>
+sin45° =
+<span class="frac"><span class="top">√2</span><span class="bottom">2</span></span>
+<br>
+cos45° =
+<span class="frac"><span class="top">√2</span><span class="bottom">2</span></span>
+<br>
+tan45° = 1
+
+<br><br>
+
 <b>60°</b><br>
-sin60° = √3/2<br>
-cos60° = 1/2<br>
+sin60° =
+<span class="frac"><span class="top">√3</span><span class="bottom">2</span></span>
+<br>
+cos60° =
+<span class="frac"><span class="top">1</span><span class="bottom">2</span></span>
+<br>
 tan60° = √3
+
 </div>
-<p class="note">※ 角度からの計算は0°以上90°未満に対応。90°はtanが定義されません。</p>
 </div>
+
 </div>
 
 <script>
-// ========================
-// 分数・ルートの計算
-// ========================
+
+// =====================
+// 分数の計算
+// =====================
 
 function gcd(a,b){
-  a=Math.abs(a);b=Math.abs(b);
-  while(b){let t=a%b;a=b;b=t;}
-  return a||1;
+ a=Math.abs(a);
+ b=Math.abs(b);
+
+ while(b){
+  let t=a%b;
+  a=b;
+  b=t;
+ }
+
+ return a||1;
 }
 
 function frac(n,d=1){
-  if(d<0){n=-n;d=-d;}
-  let g=gcd(n,d);
-  return {n:n/g,d:d/g};
+ if(d<0){
+  n=-n;
+  d=-d;
+ }
+
+ let g=gcd(n,d);
+
+ return {
+  n:n/g,
+  d:d/g
+ };
 }
 
-function fstr(f){
-  if(f.d===1)return String(f.n);
-  return f.n+"/"+f.d;
+// 分数をHTMLで表示
+function fractionHTML(n,d=1){
+
+ if(d===0)return "定義されない";
+
+ if(d<0){
+  n=-n;
+  d=-d;
+ }
+
+ let g=gcd(n,d);
+ n/=g;
+ d/=g;
+
+ if(d===1)return String(n);
+
+ return `
+ <span class="frac">
+   <span class="top">${n}</span>
+   <span class="bottom">${d}</span>
+ </span>
+ `;
 }
 
-function add(a,b){
-  return frac(a.n*b.d+b.n*a.d,a.d*b.d);
-}
-function sub(a,b){
-  return frac(a.n*b.d-b.n*a.d,a.d*b.d);
-}
-function mul(a,b){
-  return frac(a.n*b.n,a.d*b.d);
-}
-function div(a,b){
-  return frac(a.n*b.d,a.d*b.n);
-}
-
-// √n を含む数を「係数 × √ルート」の形で扱う
-function surd(n=0,r=1){
-  return {n:n,r:r};
-}
-
-function simplifySurd(x){
-  if(x.n===0)return surd(0,1);
-  let sign=x.n<0?-1:1;
-  let n=Math.abs(x.n);
-  let outside=1;
-  for(let i=2;i*i<=n;i++){
-    while(n%(i*i)===0){
-      n/=i*i;
-      outside*=i;
-    }
-  }
-  return surd(sign*outside,n);
-}
-
-function sMul(a,b){
-  return simplifySurd(surd(a.n*b.n,a.r*b.r));
-}
-
-function sDiv(a,b){
-  return simplifySurd(surd(a.n/b.n,a.r/b.r));
-}
-
-function sDecimal(a){
-  return a.n*Math.sqrt(a.r);
-}
-
-function sString(a){
-  a=simplifySurd(a);
-  if(a.n===0)return "0";
-  if(a.r===1)return String(a.n);
-  if(a.n===1)return "√"+a.r;
-  if(a.n===-1)return "-√"+a.r;
-  return a.n+"√"+a.r;
-}
-
-// 入力文字列を数値に変換
+// 入力を数値に変換
 function parseNum(text){
-  text=String(text).trim()
-    .replace(/√/g,"sqrt")
-    .replace(/\s/g,"");
 
-  if(!text)return NaN;
+ text=String(text).trim().replace(/\s/g,"");
 
-  // a/b
-  if(text.includes("/")){
-    let p=text.split("/");
-    if(p.length!==2)return NaN;
-    let a=parseNum(p[0]),b=parseNum(p[1]);
-    if(!Number.isFinite(a)||!Number.isFinite(b)||b===0)return NaN;
-    return a/b;
+ if(!text)return NaN;
+
+ // 分数
+ if(text.includes("/")){
+
+  let p=text.split("/");
+
+  if(p.length!==2)return NaN;
+
+  let a=parseNum(p[0]);
+  let b=parseNum(p[1]);
+
+  if(!Number.isFinite(a)||!Number.isFinite(b)||b===0){
+   return NaN;
   }
 
-  // sqrt(3), sqrt3
-  if(/^sqrt\(\d+(\.\d+)?\)$/.test(text)){
-    return Math.sqrt(Number(text.slice(5,-1)));
-  }
-  if(/^sqrt\d+(\.\d+)?$/.test(text)){
-    return Math.sqrt(Number(text.slice(4)));
-  }
+  return a/b;
+ }
 
-  return Number(text);
+ // √3
+ if(text.startsWith("√")){
+  return Math.sqrt(Number(text.slice(1)));
+ }
+
+ // sqrt(3)
+ if(text.startsWith("sqrt(")&&text.endsWith(")")){
+  return Math.sqrt(Number(text.slice(5,-1)));
+ }
+
+ return Number(text);
 }
 
 function fmt(n){
-  if(!Number.isFinite(n))return "定義されない";
-  return Number(n.toFixed(10)).toString();
+
+ if(!Number.isFinite(n))return "定義されない";
+
+ return Number(n.toFixed(10)).toString();
+
 }
 
-// ========================
-// 特別角の正確な表示
-// ========================
+// =====================
+// 特別角
+// =====================
 
 function exactTrig(angle){
-  const a=Number(angle.toFixed(8));
 
-  if(a===0){
-    return ["0","1","0"];
-  }
-  if(a===30){
-    return ["1/2","√3/2","√3/3"];
-  }
-  if(a===45){
-    return ["√2/2","√2/2","1"];
-  }
-  if(a===60){
-    return ["√3/2","1/2","√3"];
-  }
-  return null;
+ const a=Number(angle.toFixed(8));
+
+ if(a===0){
+  return [
+   fractionHTML(0),
+   fractionHTML(1),
+   fractionHTML(0)
+  ];
+ }
+
+ if(a===30){
+  return [
+   fractionHTML(1,2),
+   fractionHTML(3,2).replace("3","√3"),
+   fractionHTML(1,3).replace("1","√3")
+  ];
+ }
+
+ if(a===45){
+  return [
+   fractionHTML(2,2).replace("2","√2"),
+   fractionHTML(2,2).replace("2","√2"),
+   "1"
+  ];
+ }
+
+ if(a===60){
+  return [
+   fractionHTML(3,2).replace("3","√3"),
+   fractionHTML(1,2),
+   "√3"
+  ];
+ }
+
+ return null;
 }
 
-// ========================
+// =====================
 // ① 角度から計算
-// ========================
+// =====================
 
 function calcAngle(){
-  const angle=Number(document.getElementById("angle").value);
-  const error=document.getElementById("angleError");
-  error.textContent="";
 
-  if(!Number.isFinite(angle)||angle<0||angle>=90){
-    error.textContent="0以上90未満の角度を入力してください。";
-    return;
-  }
+ const angle=Number(document.getElementById("angle").value);
+ const error=document.getElementById("angleError");
 
-  const rad=angle*Math.PI/180;
-  const s=Math.sin(rad);
-  const c=Math.cos(rad);
-  const t=Math.tan(rad);
-  const exact=exactTrig(angle);
+ error.textContent="";
 
-  const vals=exact||[fmt(s),fmt(c),fmt(t)];
+ if(!Number.isFinite(angle)||angle<0||angle>=90){
+  error.textContent="0以上90未満の角度を入力してください。";
+  return;
+ }
 
-  document.getElementById("sinAngle").textContent=vals[0];
-  document.getElementById("cosAngle").textContent=vals[1];
-  document.getElementById("tanAngle").textContent=vals[2];
+ const rad=angle*Math.PI/180;
 
-  document.getElementById("sinDec").textContent="= "+fmt(s);
-  document.getElementById("cosDec").textContent="= "+fmt(c);
-  document.getElementById("tanDec").textContent="= "+fmt(t);
+ const s=Math.sin(rad);
+ const c=Math.cos(rad);
+ const t=Math.tan(rad);
+
+ const exact=exactTrig(angle);
+
+ if(exact){
+
+  document.getElementById("sinAngle").innerHTML=exact[0];
+  document.getElementById("cosAngle").innerHTML=exact[1];
+  document.getElementById("tanAngle").innerHTML=exact[2];
+
+ }else{
+
+  document.getElementById("sinAngle").textContent=fmt(s);
+  document.getElementById("cosAngle").textContent=fmt(c);
+  document.getElementById("tanAngle").textContent=fmt(t);
+
+ }
+
+ document.getElementById("sinDec").textContent="= "+fmt(s);
+ document.getElementById("cosDec").textContent="= "+fmt(c);
+ document.getElementById("tanDec").textContent="= "+fmt(t);
+
 }
 
-// ========================
+// =====================
 // ② 辺から計算
-// ========================
+// =====================
 
 function calcSides(){
-  const o=parseNum(document.getElementById("opposite").value);
-  const a=parseNum(document.getElementById("adjacent").value);
-  const hText=document.getElementById("hypotenuse").value.trim();
-  const h=hText?parseNum(hText):Math.sqrt(o*o+a*a);
-  const error=document.getElementById("sideError");
 
-  error.textContent="";
+ const oText=document.getElementById("opposite").value;
+ const aText=document.getElementById("adjacent").value;
+ const hText=document.getElementById("hypotenuse").value;
 
-  if(!Number.isFinite(o)||!Number.isFinite(a)||
-     !Number.isFinite(h)||o<0||a<=0||h<=0){
-    error.textContent="正しい辺の長さを入力してください。";
-    return;
-  }
+ const o=parseNum(oText);
+ const a=parseNum(aText);
+ const h=parseNum(hText);
 
-  if(h<o||h<a||h*h<o*o+a*a-1e-8){
-    error.textContent="斜辺は、他の2辺から計算した長さ以上にしてください。";
-    return;
-  }
+ const error=document.getElementById("sideError");
 
-  const sin=o/h;
-  const cos=a/h;
-  const tan=o/a;
+ error.textContent="";
 
-  // 分数表示：入力が整数・分数のときは厳密な分数を優先
-  const oText=document.getElementById("opposite").value;
-  const aText=document.getElementById("adjacent").value;
-  const hInput=hText;
+ if(!Number.isFinite(o)||!Number.isFinite(a)||!Number.isFinite(h)||
+    o<0||a<=0||h<=0){
 
-  const of=parseFraction(oText);
-  const af=parseFraction(aText);
-  const hf=hInput?parseFraction(hInput):null;
+  error.textContent="正しい辺の長さを入力してください。";
+  return;
 
-  let sinExact=fmt(sin);
-  let cosExact=fmt(cos);
-  let tanExact=fmt(tan);
+ }
 
-  if(of&&af){
-    if(hf){
-      sinExact=fstr(div(of,hf));
-      cosExact=fstr(div(af,hf));
-    }else{
-      // 斜辺をピタゴラスで求めた場合は小数表示
-      sinExact=fmt(sin);
-      cosExact=fmt(cos);
-    }
-    tanExact=fstr(div(of,af));
-  }
+ if(h*h<o*o+a*a-1e-8){
 
-  document.getElementById("sinSide").textContent=sinExact;
-  document.getElementById("cosSide").textContent=cosExact;
-  document.getElementById("tanSide").textContent=tanExact;
+  error.textContent="斜辺が短すぎます。";
+  return;
 
-  document.getElementById("sinSideDec").textContent="= "+fmt(sin);
-  document.getElementById("cosSideDec").textContent="= "+fmt(cos);
-  document.getElementById("tanSideDec").textContent="= "+fmt(tan);
+ }
 
-  document.getElementById("sideSteps").innerHTML=
-    "<b>計算の過程</b><br>"+
-    "sin A = "+fmt(o)+" ÷ "+fmt(h)+" = "+fmt(sin)+"<br>"+
-    "cos A = "+fmt(a)+" ÷ "+fmt(h)+" = "+fmt(cos)+"<br>"+
-    "tan A = "+fmt(o)+" ÷ "+fmt(a)+" = "+fmt(tan);
+ const sin=o/h;
+ const cos=a/h;
+ const tan=o/a;
+
+ // 入力が分数・整数なら分数表示
+ const of=parseFraction(oText);
+ const af=parseFraction(aText);
+ const hf=parseFraction(hText);
+
+ if(of&&af&&hf){
+
+  document.getElementById("sinSide").innerHTML=
+   fractionHTML(of.n*hf.d,of.d*hf.n);
+
+  document.getElementById("cosSide").innerHTML=
+   fractionHTML(af.n*hf.d,af.d*hf.n);
+
+  document.getElementById("tanSide").innerHTML=
+   fractionHTML(of.n*af.d,of.d*af.n);
+
+ }else{
+
+  document.getElementById("sinSide").textContent=fmt(s);
+  document.getElementById("cosSide").textContent=fmt(c);
+  document.getElementById("tanSide").textContent=fmt(t);
+
+ }
+
+ document.getElementById("sinSideDec").textContent="= "+fmt(s);
+ document.getElementById("cosSideDec").textContent="= "+fmt(c);
+ document.getElementById("tanSideDec").textContent="= "+fmt(t);
+
 }
 
-// 分数として解釈できる入力だけを取得
+// 分数・整数として読み取れるか
 function parseFraction(text){
-  text=String(text).trim().replace(/\s/g,"");
-  if(!/^-?\d+\/-?\d+$/.test(text)&&
-     !/^-?\d+$/.test(text))return null;
 
-  if(text.includes("/")){
-    const p=text.split("/");
-    const n=Number(p[0]),d=Number(p[1]);
-    if(d===0)return null;
-    return frac(n,d);
-  }
+ text=String(text).trim().replace(/\s/g,"");
+
+ if(/^-?\d+$/.test(text)){
   return frac(Number(text),1);
+ }
+
+ if(/^-?\d+\/-?\d+$/.test(text)){
+
+  let p=text.split("/");
+
+  let n=Number(p[0]);
+  let d=Number(p[1]);
+
+  if(d===0)return null;
+
+  return frac(n,d);
+ }
+
+ return null;
+
 }
 
 calcAngle();
 calcSides();
+
 </script>
+
 </body>
 </html>
